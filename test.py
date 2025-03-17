@@ -1,46 +1,29 @@
 def unit_propagate(clause_set):
-    answer = set()  
-    max_var = max(abs(lit) for clause in clause_set for lit in clause)  
+    answer = set()
+    
+    def iteration(clause, assignment):
+        global reduced_clauses
+        reduced_clauses = [clause for clause in clause_set if assignment not in clause]
+        print(reduced_clauses)
+        for clause in reduced_clauses:
+            if -assignment in clause:
+                clause.remove(-assignment)
+                propagate(reduced_clauses)
 
-    def is_satisfied(clause_set):
-        for clause in clause_set:
-            if not any(lit in answer for lit in clause):  
-                return False
-        return True
+
+    
     def propagate(clause):
         for i in clause:
-            if len(i) > 1:
-                return
+            if len(i) != 1:
+                pass
             else:
-                answer.append(i[0])
-                clause.remove(i)
-                propagate(clause)
-                
+                answer.add(i[0])
+                iteration(clause_set, i[0])
+        return(reduced_clauses)
 
-
-        
-        
-        ...
-
-    def start(variable):
-        if variable > max_var: 
-            if is_satisfied(clause_set):  
-                return list(answer)
-            return None  
-
-        for val in [variable, -variable]:  
-            answer.add(val) 
-            result = start(variable + 1) 
-            if result is not None:  
-                return result
-            answer.remove(val)  
-
-        return None 
-
-    return start(1)      
+    propagate(clause_set)
     
-    
-    
+
     
     
 
