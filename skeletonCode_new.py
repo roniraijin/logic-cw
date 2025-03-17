@@ -20,7 +20,39 @@ def load_dimacs(file_name):
 
 
 def simple_sat_solve(clause_set):
-    ...
+    def simple_sat_solve(clause_set):
+    answer = set()  # Track variable assignments
+    max_var = max(abs(lit) for clause in clause_set for lit in clause)  # Find the highest variable
+
+    def is_satisfied(clause_set):
+        """Check if all clauses have at least one True literal"""
+        for clause in clause_set:
+            if not any(lit in answer for lit in clause):  # If no literal is satisfied
+                return False
+        return True
+
+    def start(variable):
+        if variable > max_var:  # Base case: All variables assigned
+            if is_satisfied(clause_set):  # Check if formula is satisfied
+                print("Solution found:", list(answer))
+                return list(answer)
+            return None  # If no valid assignment found
+
+        for val in [variable, -variable]:  # Try both True and False assignments
+            answer.add(val)  # Assign the variable
+            result = start(variable + 1)  # Recur for the next variable
+            if result is not None:  # If a solution was found, return it
+                return result
+            answer.remove(val)  # Backtrack if it doesn't work
+
+        return None  # If no assignment works
+
+    return start(1)  # Start with variable 1
+
+# Test
+sat1 = [[1], [1, -1], [-1, -2]]
+solution = simple_sat_solve(sat1)
+print("Final Solution:", solution)
 
 
 def branching_sat_solve(clause_set,partial_assignment):
