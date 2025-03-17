@@ -1,12 +1,12 @@
 
 def load_dimacs(file_name):
     #file_name will be of the form "problem_name.txt"
-    with open('file_name.txt', 'r') as d:
+    with open(f'{file_name}', 'r') as d:
         d = d.readlines()
     d.pop(0)
-    clause_set = {}
+    clause_set = []
     for x in d:
-        temp = {}  
+        temp = []  
         for t in x.split():
             if t != '0':
                 try:    
@@ -16,7 +16,7 @@ def load_dimacs(file_name):
         if temp:  
             clause_set.append(temp)
 
-    print(clause_set)
+    return(clause_set)
 
 
 def simple_sat_solve(clause_set):
@@ -90,11 +90,94 @@ def branching_sat_solve(clause_set,partial_assignment):
 
 
 def unit_propagate(clause_set):
-    ...
+    
+    
+    def propagate(unit, p_set):    
+        new_set = [clause for clause in p_set if unit not in clause]
+        print(new_set)
+        for clause in new_set:
+            if -unit in clause:
+                clause.remove(-unit)
+        return new_set
+    
+    
+    def iteration(Fortnite):
+        clause_unit = None
+        for clause in Fortnite:
+            if len(clause) == 1:
+                clause_unit = clause[0]
+                sigma = propagate(clause_unit, Fortnite)
+                if not sigma:
+                    return []
+                else:
+                    return iteration(sigma)
+
+        #print(clause_set)
+        return Fortnite
+    
+    #print(iteration(clause_set))
+    return(iteration(clause_set))
+
 
 
 def dpll_sat_solve(clause_set,partial_assignment):
     ...
+    def propagate(unit, p_set):    
+        new_set = [clause for clause in p_set if unit not in clause]
+        print(new_set)
+        for clause in new_set:
+            if -unit in clause:
+                clause.remove(-unit)
+        return new_set
+    
+    
+    def iteration(Fortnite):
+        clause_unit = None
+        for clause in Fortnite:
+            if len(clause) == 1:
+                clause_unit = clause[0]
+                sigma = propagate(clause_unit, Fortnite)
+                if not sigma:
+                    return []
+                else:
+                    return iteration(sigma)
+
+        #print(clause_set)
+        return Fortnite
+    
+    #print(iteration(clause_set))
+    return(iteration(clause_set))
+    
+    reduced_clauses = []
+    for clause in clause_set:
+        if any(lit in partial_assignment for lit in clause):  
+            continue  
+        reduced_clause = [lit for lit in clause if -lit not in partial_assignment]
+        if not reduced_clause:  
+            return False
+        reduced_clauses.append(reduced_clause)
+
+    
+    if not reduced_clauses:
+        return partial_assignment  
+
+    
+    for clause in reduced_clauses:
+        for lit in clause:
+            if lit not in partial_assignment and -lit not in partial_assignment:
+                variable = abs(lit)
+                break
+        else:
+            continue
+        break
+
+    
+    result = simple_sat_solve(reduced_clauses, partial_assignment + [variable])
+    if result:
+        return result  
+
+ 
+    return simple_sat_solve(reduced_clauses, partial_assignment + [-variable])
 
 
 
@@ -167,3 +250,5 @@ def test():
         except:
             print("Failed problem " + str(problem))
     print("Finished tests")
+
+test()
