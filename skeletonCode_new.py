@@ -50,9 +50,8 @@ def simple_sat_solve(clause_set):
     return start(1)  # Start with variable 1
 
 # Test
-sat1 = [[1], [1, -1], [-1, -2]]
-solution = simple_sat_solve(sat1)
-print("Final Solution:", solution)
+simple_sat_solve(sat1)
+
 
 
 def branching_sat_solve(clause_set,partial_assignment):
