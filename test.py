@@ -1,32 +1,39 @@
 def unit_propagate(clause_set):
     answer = set()
     
-    def iteration(clause, assignment):
-        global reduced_clauses
-        reduced_clauses = [clause for clause in clause_set if assignment not in clause]
-        print(reduced_clauses)
+    def iteration(clauses, assignment):
+        reduced_clauses = clauses.copy()
+        reduced_clauses = [clause for clause in clauses if assignment not in clause]
+        print(f"Reduced clauses after assignment {assignment}: {reduced_clauses}")
+
+        if reduced_clauses == []:
+            return []
         for clause in reduced_clauses:
             if -assignment in clause:
+                
                 clause.remove(-assignment)
+                print(f"Clause after removal of {-assignment}: {clause}")
                 propagate(reduced_clauses)
 
 
     
-    def propagate(clause):
-        for i in clause:
+    def propagate(clauses):
+        if all(item == [] for item in clauses):
+            return []
+        for i in clauses:
             if len(i) != 1:
                 pass
-            else:
+            if len(i) == 1:
+                #print(i)
                 answer.add(i[0])
-                iteration(clause_set, i[0])
-        return(reduced_clauses)
+                iteration(clauses, i[0])
+        
+    propagate(clause_set)    
+    return answer
 
-    propagate(clause_set)
+    
     
 
-    
-    
 
-
-clause_set = [[1],[-1,2]]
-print(unit_propagate(clause_set))
+sat1 = [[1],[-1,2]]
+print(unit_propagate(sat1))
