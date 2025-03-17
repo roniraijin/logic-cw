@@ -1,21 +1,49 @@
-def load_dimacs(file_name):
-    #file_name will be of the form "problem_name.txt"
-    with open(file_name, 'r') as d:
-        d = d.readlines()
-    d.pop(0)
-    clause_set = []
-    for x in d:
-        temp = []  
-        for t in x.split():
-            if t != '0':
-                try:    
-                    temp.append(int(t))  
-                except ValueError:
-                    pass
-        if temp:  
-            clause_set.append(temp)
+def unit_propagate(clause_set):
+    answer = set()  
+    max_var = max(abs(lit) for clause in clause_set for lit in clause)  
 
-    print(clause_set)
+    def is_satisfied(clause_set):
+        for clause in clause_set:
+            if not any(lit in answer for lit in clause):  
+                return False
+        return True
+    def propagate(clause):
+        for i in clause:
+            if len(i) > 1:
+                return
+            else:
+                answer.append(i[0])
+                clause.remove(i)
+                propagate(clause)
+                
 
 
-load_dimacs('sat.txt')
+        
+        
+        ...
+
+    def start(variable):
+        if variable > max_var: 
+            if is_satisfied(clause_set):  
+                return list(answer)
+            return None  
+
+        for val in [variable, -variable]:  
+            answer.add(val) 
+            result = start(variable + 1) 
+            if result is not None:  
+                return result
+            answer.remove(val)  
+
+        return None 
+
+    return start(1)      
+    
+    
+    
+    
+    
+
+
+clause_set = [[1],[-1,2]]
+print(unit_propagate(clause_set))

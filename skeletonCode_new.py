@@ -20,42 +20,73 @@ def load_dimacs(file_name):
 
 
 def simple_sat_solve(clause_set):
-    def simple_sat_solve(clause_set):
-    answer = set()  # Track variable assignments
-    max_var = max(abs(lit) for clause in clause_set for lit in clause)  # Find the highest variable
+    answer = set()  
+    max_var = max(abs(lit) for clause in clause_set for lit in clause)  
 
     def is_satisfied(clause_set):
-        """Check if all clauses have at least one True literal"""
+        
         for clause in clause_set:
-            if not any(lit in answer for lit in clause):  # If no literal is satisfied
+            if not any(lit in answer for lit in clause):  
                 return False
         return True
 
     def start(variable):
-        if variable > max_var:  # Base case: All variables assigned
-            if is_satisfied(clause_set):  # Check if formula is satisfied
-                print("Solution found:", list(answer))
+        if variable > max_var: 
+            if is_satisfied(clause_set):  
                 return list(answer)
-            return None  # If no valid assignment found
+            return None  
 
-        for val in [variable, -variable]:  # Try both True and False assignments
-            answer.add(val)  # Assign the variable
-            result = start(variable + 1)  # Recur for the next variable
-            if result is not None:  # If a solution was found, return it
+        for val in [variable, -variable]:  
+            answer.add(val) 
+            result = start(variable + 1) 
+            if result is not None:  
                 return result
-            answer.remove(val)  # Backtrack if it doesn't work
+            answer.remove(val)  
 
-        return None  # If no assignment works
+        return None 
 
-    return start(1)  # Start with variable 1
+    return start(1)  
 
-# Test
-simple_sat_solve(sat1)
+
+
+
+
 
 
 
 def branching_sat_solve(clause_set,partial_assignment):
-    ...
+    reduced_clauses = []
+    for clause in clause_set:
+        if any(lit in partial_assignment for lit in clause):  
+            continue  
+        reduced_clause = [lit for lit in clause if -lit not in partial_assignment]
+        if not reduced_clause:  
+            return False
+        reduced_clauses.append(reduced_clause)
+
+    
+    if not reduced_clauses:
+        return partial_assignment  
+
+    
+    for clause in reduced_clauses:
+        for lit in clause:
+            if lit not in partial_assignment and -lit not in partial_assignment:
+                variable = abs(lit)
+                break
+        else:
+            continue
+        break
+
+    
+    result = simple_sat_solve(reduced_clauses, partial_assignment + [variable])
+    if result:
+        return result  
+
+ 
+    return simple_sat_solve(reduced_clauses, partial_assignment + [-variable])
+
+
 
 
 def unit_propagate(clause_set):
