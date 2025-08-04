@@ -1,0 +1,1 @@
+This repo is the accumulation of my work in creating a SAT Solver that could solve popular NP-Complete problems. I have multiple different files for my progress with my final submission being the skeletoncode file. Please enjoy
